@@ -6,7 +6,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 
-public class BuildSingleProfile extends AnAction {
+public class BuildSingleConfig extends AnAction {
     @Override
     public void actionPerformed(@NotNull AnActionEvent e) {
         Thread.currentThread().setContextClassLoader(this.getClass().getClassLoader());

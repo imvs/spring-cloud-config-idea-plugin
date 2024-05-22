@@ -1,0 +1,6 @@
+test:
+  list:
+    - first
+    - second
+  dict:
+    foo: foo

@@ -1,9 +1,14 @@
 package me.imvs.springcloudconfighelper.plugin;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
+import com.fasterxml.jackson.dataformat.yaml.YAMLGenerator;
+
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Map;
 
 public class FileUtils {
     private final static String PROPERTIES_FILE_NAME = "spring-cloud-config-helper.properties";
@@ -13,8 +18,9 @@ public class FileUtils {
         this.basePath = basePath;
     }
 
-    public void writeResult(String result, String outFile) throws IOException {
-        Files.writeString(getFilePath(outFile), result);
+    public void writeYaml(Map<String, Object> map, String outFile) throws IOException {
+        ObjectMapper theMapper = new ObjectMapper(new YAMLFactory().disable(YAMLGenerator.Feature.WRITE_DOC_START_MARKER));
+        Files.writeString(getFilePath(outFile), theMapper.writeValueAsString(map));
     }
 
     private Path getFilePath(String relativePath) {
@@ -45,7 +51,7 @@ public class FileUtils {
         return build;
     }
 
-    File getPropertiesFile() {
+    public File getPropertiesFile() {
         File tmp = getTempDir();
         return new File(tmp, PROPERTIES_FILE_NAME);
     }

@@ -1,0 +1,5 @@
+test:
+  list: singleton
+  dict:
+    foo: bar
+    add: special

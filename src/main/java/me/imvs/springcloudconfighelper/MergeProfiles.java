@@ -1,13 +1,10 @@
 package me.imvs.springcloudconfighelper;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
-import com.fasterxml.jackson.dataformat.yaml.YAMLGenerator;
 import io.micrometer.observation.ObservationRegistry;
 import org.springframework.cloud.config.environment.PropertySource;
 import org.springframework.cloud.config.server.environment.NativeEnvironmentProperties;
 import org.springframework.cloud.config.server.environment.NativeEnvironmentRepository;
+import org.springframework.core.Ordered;
 import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.core.env.StandardEnvironment;
 
@@ -16,9 +13,11 @@ import java.util.Map;
 
 public class MergeProfiles {
 
-    ObjectMapper theMapper = new ObjectMapper(new YAMLFactory().disable(YAMLGenerator.Feature.WRITE_DOC_START_MARKER));
+    public Map<String, Object> merge(String[] locations, String application, String profile) {
+        return merge(locations, Ordered.LOWEST_PRECEDENCE, application, profile);
+    }
 
-    public String getYaml(String[] locations, int order, String application, String profile) throws JsonProcessingException {
+    public Map<String, Object> merge(String[] locations, int order, String application, String profile) {
         Map<String, Object> result = new LinkedHashMap<>();
         NativeEnvironmentRepository repository = getRepository(getProperties(locations, order));
         for (PropertySource propertySource : repository.findOne(application, profile, null).getPropertySources()) {
@@ -26,7 +25,7 @@ public class MergeProfiles {
             Map<String, Object> unFlatten = YamlUtils.unFlat((Map<String, Object>) propertySource.getSource());
             result = combine(result, unFlatten);
         }
-        return theMapper.writeValueAsString(result);
+        return result;
     }
 
     NativeEnvironmentProperties getProperties(String[] locations, int order) {

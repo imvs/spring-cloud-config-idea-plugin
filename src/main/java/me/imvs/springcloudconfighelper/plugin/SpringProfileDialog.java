@@ -2,7 +2,6 @@ package me.imvs.springcloudconfighelper.plugin;
 
 import com.intellij.openapi.project.Project;
 import me.imvs.springcloudconfighelper.MergeProfiles;
-import org.springframework.core.Ordered;
 
 import javax.swing.*;
 import java.awt.event.KeyEvent;
@@ -13,6 +12,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.Map;
 import java.util.Properties;
 
 public class SpringProfileDialog extends JDialog {
@@ -65,8 +65,8 @@ public class SpringProfileDialog extends JDialog {
     private void onOK() throws IOException {
         String[] locations = getLocations();
         MergeProfiles mergeProfiles = new MergeProfiles();
-        String result = mergeProfiles.getYaml(locations, Ordered.LOWEST_PRECEDENCE, appNameField.getText(), profilesField.getText());
-        fileUtils.writeResult(result, outYamlField.getText());
+        Map<String, Object> mergeResult = mergeProfiles.merge(locations, appNameField.getText(), profilesField.getText());
+        fileUtils.writeYaml(mergeResult, outYamlField.getText());
         updateProperties();
         dispose();
     }
@@ -80,14 +80,18 @@ public class SpringProfileDialog extends JDialog {
         properties.setProperty(PROFILES_PROPERTY, profilesField.getText());
         properties.setProperty(LOCATIONS_PROPERTY, locationsFiled.getText());
         properties.setProperty(OUT_YAML_PROPERTY, outYamlField.getText());
-        properties.store(new FileOutputStream(fileUtils.getPropertiesFile()), null);
+        try (FileOutputStream fos = new FileOutputStream(fileUtils.getPropertiesFile())) {
+            properties.store(fos, null);
+        }
     }
 
     private void loadProperties() throws IOException {
         properties = new Properties();
         File propertiesFile = fileUtils.getPropertiesFile();
         if (propertiesFile.exists()) {
-            properties.load(new FileInputStream(propertiesFile));
+            try (FileInputStream fis = new FileInputStream(propertiesFile)) {
+                properties.load(fis);
+            }
             if (properties.containsKey(APP_NAME_PROPERTY)) {
                 appNameField.setText(properties.getProperty(APP_NAME_PROPERTY));
             }

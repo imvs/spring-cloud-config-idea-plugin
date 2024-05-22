@@ -40,6 +40,7 @@ jar.doFirst {
 }
 
 dependencies {
+    //noinspection VulnerableLibrariesLocal
     implementation("org.springframework.cloud:spring-cloud-config-server:4.1.0") {
         exclude group: "org.springframework.boot", module: "spring-boot-starter-web"
         exclude group: "org.springframework.boot", module: "spring-boot-starter-validation"
@@ -50,5 +51,10 @@ dependencies {
     implementation files("libs/forms_rt.jar")
     testImplementation('org.junit.jupiter:junit-jupiter-api:5.9.2')
     testRuntimeOnly('org.junit.jupiter:junit-jupiter-engine:5.9.2')
+    testRuntimeOnly("org.junit.platform:junit-platform-launcher:1.7.2")
+}
+
+test {
+    useJUnitPlatform()
 }
 
