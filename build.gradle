@@ -3,7 +3,7 @@ plugins {
     id("org.jetbrains.intellij") version "1.16.1"
 }
 
-group = "me.imvs"
+group = "com.github.imvs"
 version = "1.0"
 
 repositories {
@@ -22,25 +22,17 @@ java {
 
 tasks {
     signPlugin {
-        certificateChain.set(System.getenv("CERTIFICATE_CHAIN"))
-        privateKey.set(System.getenv("PRIVATE_KEY"))
-        password.set(System.getenv("PRIVATE_KEY_PASSWORD"))
+        certificateChain.set(project.property("signPlugin.certificateChain").toString())
+        privateKey.set(project.property("signPlugin.privateKey").toString())
+        password.set(project.property("signPlugin.password").toString())
     }
 
     publishPlugin {
-        token.set( project.property("publishToken").toString())
-    }
-}
-
-jar.doFirst {
-    duplicatesStrategy = DuplicatesStrategy.INCLUDE
-    from {
-        configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
+        token.set(project.property("publishPlugin.publishToken").toString())
     }
 }
 
 dependencies {
-    //noinspection VulnerableLibrariesLocal
     implementation("org.springframework.cloud:spring-cloud-config-server:4.1.0") {
         exclude group: "org.springframework.boot", module: "spring-boot-starter-web"
         exclude group: "org.springframework.boot", module: "spring-boot-starter-validation"
@@ -48,10 +40,15 @@ dependencies {
         exclude group: "ORG.APACHE.SSHD", module: ""
         exclude group: "org.slf4j", module: ""
     }
-    implementation files("libs/forms_rt.jar")
-    testImplementation('org.junit.jupiter:junit-jupiter-api:5.9.2')
-    testRuntimeOnly('org.junit.jupiter:junit-jupiter-engine:5.9.2')
-    testRuntimeOnly("org.junit.platform:junit-platform-launcher:1.7.2")
+    compileOnly files("libs/forms_rt.jar")
+    compileOnly "org.projectlombok:lombok:1.18.32"
+    annotationProcessor "org.projectlombok:lombok:1.18.32"
+    testCompileOnly "org.projectlombok:lombok:1.18.32"
+    testAnnotationProcessor "org.projectlombok:lombok:1.18.32"
+
+    testImplementation "org.junit.jupiter:junit-jupiter-api:5.9.2"
+    testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:5.9.2"
+    testRuntimeOnly "org.junit.platform:junit-platform-launcher:1.7.2"
 }
 
 test {

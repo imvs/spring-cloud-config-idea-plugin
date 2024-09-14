@@ -3,4 +3,5 @@ test:
     - first
     - second
   dict:
-    foo: foo
+    default: 0
+    foo: bar

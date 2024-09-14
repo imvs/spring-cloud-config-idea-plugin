@@ -6,13 +6,13 @@ import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 
-public class BuildSingleConfig extends AnAction {
+public class ProfilesMergerPlugin extends AnAction {
     @Override
     public void actionPerformed(@NotNull AnActionEvent e) {
         Thread.currentThread().setContextClassLoader(this.getClass().getClassLoader());
-        SpringProfileDialog dialog;
+        PluginDialog dialog;
         try {
-            dialog = new SpringProfileDialog(e.getProject());
+            dialog = new PluginDialog(e.getProject());
         } catch (IOException ex) {
             throw new RuntimeException(ex);
         }

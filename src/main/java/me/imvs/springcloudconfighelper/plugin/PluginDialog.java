@@ -1,7 +1,8 @@
 package me.imvs.springcloudconfighelper.plugin;
 
 import com.intellij.openapi.project.Project;
-import me.imvs.springcloudconfighelper.MergeProfiles;
+import me.imvs.springcloudconfighelper.CollectionsMerger;
+import me.imvs.springcloudconfighelper.FileSupport;
 
 import javax.swing.*;
 import java.awt.event.KeyEvent;
@@ -15,12 +16,13 @@ import java.util.Arrays;
 import java.util.Map;
 import java.util.Properties;
 
-public class SpringProfileDialog extends JDialog {
+public class PluginDialog extends JDialog {
 
     private static final String APP_NAME_PROPERTY = "app-name";
     private static final String PROFILES_PROPERTY = "profiles";
     private static final String LOCATIONS_PROPERTY = "locations";
     private static final String OUT_YAML_PROPERTY = "out-yaml";
+    private static final String BUILD_DIR = "build";
     private JPanel contentPane;
     private JButton buttonOK;
     private JButton buttonCancel;
@@ -29,11 +31,12 @@ public class SpringProfileDialog extends JDialog {
     private JTextField locationsFiled;
     private JTextField outYamlField;
     private final Project project;
-    private final FileUtils fileUtils;
+    private final FileSupport fileSupport;
     private Properties properties;
 
-    public SpringProfileDialog(Project project) throws IOException {
+    public PluginDialog(Project project) throws IOException {
         this.project = project;
+        fileSupport = new FileSupport(getBaseDir());
         setContentPane(contentPane);
         setModal(true);
         getRootPane().setDefaultButton(buttonOK);
@@ -57,16 +60,14 @@ public class SpringProfileDialog extends JDialog {
 
         contentPane.registerKeyboardAction(e -> onCancel(),
                 KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
-
-        fileUtils = new FileUtils(getBaseDir());
         loadProperties();
     }
 
     private void onOK() throws IOException {
         String[] locations = getLocations();
-        MergeProfiles mergeProfiles = new MergeProfiles();
-        Map<String, Object> mergeResult = mergeProfiles.merge(locations, appNameField.getText(), profilesField.getText());
-        fileUtils.writeYaml(mergeResult, outYamlField.getText());
+        CollectionsMerger collectionsMerger = new CollectionsMerger();
+        Map<String, Object> mergeResult = collectionsMerger.merge(locations, appNameField.getText(), profilesField.getText());
+        fileSupport.writeYaml(mergeResult, outYamlField.getText());
         updateProperties();
         dispose();
     }
@@ -80,14 +81,14 @@ public class SpringProfileDialog extends JDialog {
         properties.setProperty(PROFILES_PROPERTY, profilesField.getText());
         properties.setProperty(LOCATIONS_PROPERTY, locationsFiled.getText());
         properties.setProperty(OUT_YAML_PROPERTY, outYamlField.getText());
-        try (FileOutputStream fos = new FileOutputStream(fileUtils.getPropertiesFile())) {
+        try (FileOutputStream fos = new FileOutputStream(fileSupport.getPropertiesFile(BUILD_DIR))) {
             properties.store(fos, null);
         }
     }
 
     private void loadProperties() throws IOException {
         properties = new Properties();
-        File propertiesFile = fileUtils.getPropertiesFile();
+        File propertiesFile = fileSupport.getPropertiesFile(BUILD_DIR);
         if (propertiesFile.exists()) {
             try (FileInputStream fis = new FileInputStream(propertiesFile)) {
                 properties.load(fis);

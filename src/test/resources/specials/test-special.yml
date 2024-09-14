@@ -1,5 +1,5 @@
 test:
-  list: singleton
+  list: string
   dict:
-    foo: bar
-    add: special
+    foo: overridden
+    add: more
