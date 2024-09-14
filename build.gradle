@@ -5,6 +5,7 @@ plugins {
 }
 
 group = "com.github.imvs"
+project.version = scmVersion.version
 
 repositories {
     mavenCentral()
