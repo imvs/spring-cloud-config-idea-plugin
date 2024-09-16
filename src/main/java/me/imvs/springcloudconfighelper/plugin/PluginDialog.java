@@ -23,6 +23,8 @@ public class PluginDialog extends JDialog {
     private static final String LOCATIONS_PROPERTY = "locations";
     private static final String OUT_YAML_PROPERTY = "out-yaml";
     private static final String BUILD_DIR = "build";
+    private static final String DEFAULT_APP_NAME = "application";
+    private static final String DEFAULT_OUT_FILE = "build/output.yml";
     private JPanel contentPane;
     private JButton buttonOK;
     private JButton buttonCancel;
@@ -30,6 +32,7 @@ public class PluginDialog extends JDialog {
     private JTextField profilesField;
     private JTextField locationsFiled;
     private JTextField outYamlField;
+    private JLabel errorMessage;
     private final Project project;
     private final FileSupport fileSupport;
     private Properties properties;
@@ -40,17 +43,16 @@ public class PluginDialog extends JDialog {
         setContentPane(contentPane);
         setModal(true);
         getRootPane().setDefaultButton(buttonOK);
-
         buttonOK.addActionListener(e -> {
             try {
                 onOK();
-            } catch (IOException ex) {
-                throw new RuntimeException(ex);
+                errorMessage.setText("");
+            } catch (Throwable ex) {
+                errorMessage.setText(ex.getMessage());
             }
         });
 
         buttonCancel.addActionListener(e -> onCancel());
-
         setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
         addWindowListener(new WindowAdapter() {
             public void windowClosing(WindowEvent e) {
@@ -95,6 +97,8 @@ public class PluginDialog extends JDialog {
             }
             if (properties.containsKey(APP_NAME_PROPERTY)) {
                 appNameField.setText(properties.getProperty(APP_NAME_PROPERTY));
+            } else {
+                appNameField.setText(DEFAULT_APP_NAME);
             }
             if (properties.containsKey(PROFILES_PROPERTY)) {
                 profilesField.setText(properties.getProperty(PROFILES_PROPERTY));
@@ -104,6 +108,8 @@ public class PluginDialog extends JDialog {
             }
             if (properties.containsKey(OUT_YAML_PROPERTY)) {
                 outYamlField.setText(properties.getProperty(OUT_YAML_PROPERTY));
+            } else {
+                outYamlField.setText(DEFAULT_OUT_FILE);
             }
         } else {
             if (!propertiesFile.createNewFile()) {

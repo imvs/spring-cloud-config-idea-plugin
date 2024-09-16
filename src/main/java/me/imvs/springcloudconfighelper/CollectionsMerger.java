@@ -22,6 +22,9 @@ public class CollectionsMerger {
     }
 
     public Map<String, Object> merge(String[] locations, int order, String application, String profile) {
+        if (application == null || application.isBlank()) {
+            throw new IllegalArgumentException("Application name not specified");
+        }
         Map<String, Object> result = new LinkedHashMap<>();
         NativeEnvironmentRepository repository = getRepository(getProperties(locations, order));
         Map<String, ? extends Map<?, ?>> propertySources = repository
@@ -35,7 +38,7 @@ public class CollectionsMerger {
                         PropertySource::getSource)
                 );
         if (propertySources.isEmpty()) {
-            throw new IllegalStateException("property sources are empty");
+            throw new IllegalStateException("Property sources are empty");
         }
         for (String p : profile.split(PROFILE_SPLIT_REGEX)) {
             Map<?, ?> map = propertySources.get(p);

@@ -5,7 +5,7 @@
 
     <!-- Public plugin name should be written in Title Case.
          Guidelines: https://plugins.jetbrains.com/docs/marketplace/plugin-overview-page.html#plugin-name -->
-    <name>Profiles Merger</name>
+    <name>Spring Profiles Merger</name>
 
     <!-- A displayed Vendor name or Organization ID displayed on the Plugins Page. -->
     <vendor email="mike.sauh@gmail.com" url="https://github.com/imvs">Michael Sauh</vendor>
@@ -13,7 +13,25 @@
     <!-- Description of the plugin displayed on the Plugin Page and IDE Plugin Manager.
          Simple HTML elements (text formatting, paragraphs, and lists) can be added inside of <![CDATA[ ]]> tag.
          Guidelines: https://plugins.jetbrains.com/docs/marketplace/plugin-overview-page.html#plugin-description -->
-    <description>Plugin that uses Spring Cloud Config api to merge specified application profiles into a single config</description>
+    <description><![CDATA[
+        Merge Spring application profiles into a single pretty YAML configuration.
+         <br/>
+        Plugin based on Spring Cloud Config API. It's very handy for debugging configurations with many profiles.
+        <br/>
+        Usage:
+            <ol>
+              <li>Press <samp>shift+ctrl+P</samp> and <samp>shift+ctrl+M</samp> to open plugin dialog</li>
+              <li>Set the values:
+                <ul>
+                  <li><b>Application Name</b> - Spring application name (aka <samp>spring.application.name</samp>)</li>
+                  <li><b>Profiles</b> - Comma separated profiles names (aka <samp>spring.profiles.active</samp>)</li>
+                  <li><b>Search Locations</b> - Comma separated directories contained configuration files</li>
+                  <li><b>Output File</b> - Where to save merged configuration</li>
+                  </ul>
+              </li>
+            </ol>
+        GitHub: https://github.com/imvs/spring-cloud-config-idea-plugin
+    ]]></description>
 
     <!-- Product and plugin compatibility requirements.
          Read more: https://plugins.jetbrains.com/docs/intellij/plugin-compatibility.html -->
@@ -27,8 +45,11 @@
     <actions>
         <action id="me.imvs.springcloudconfighelper.plugin.ProfilesMergerPlugin"
                 class="me.imvs.springcloudconfighelper.plugin.ProfilesMergerPlugin" text="Merge Profiles"
-                description="Merge all profiles into single config">
+                description="Merge Spring application profiles">
             <keyboard-shortcut keymap="$default" first-keystroke="shift ctrl P" second-keystroke="shift ctrl M"/>
         </action>
     </actions>
+    <change-notes><![CDATA[
+        <h2>Improved description</h2>
+    ]]></change-notes>
 </idea-plugin>
