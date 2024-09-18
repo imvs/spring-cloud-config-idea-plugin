@@ -1,19 +1,30 @@
 plugins {
     id("java")
-    id("org.jetbrains.intellij") version "1.16.1"
+    id("org.jetbrains.intellij.platform") version "2.0.1"
     id("pl.allegro.tech.build.axion-release") version "1.18.7"
 }
 
 group = "com.github.imvs"
+
+scmVersion {
+    ignoreUncommittedChanges.set(false)
+}
+
 project.version = scmVersion.version
 
 repositories {
     mavenCentral()
+    intellijPlatform {
+        defaultRepositories()
+    }
 }
 
-intellij {
-    version.set("2023.2")
-    type.set("IC")
+intellijPlatform {
+    pluginVerification {
+        ides {
+            recommended()
+        }
+    }
 }
 
 java {
@@ -31,9 +42,23 @@ tasks {
     publishPlugin {
         token.set(project.property("publishPlugin.publishToken").toString())
     }
+
+    patchPluginXml {
+        sinceBuild = provider { "232.10300" }
+        untilBuild = provider { null }
+    }
 }
 
 dependencies {
+
+    intellijPlatform {
+        intellijIdeaCommunity("2023.2.6")
+        bundledPlugin("com.intellij.java")
+        instrumentationTools()
+        pluginVerifier()
+        zipSigner()
+    }
+
     implementation("org.springframework.cloud:spring-cloud-config-server:4.1.0") {
         exclude group: "org.springframework.boot", module: "spring-boot-starter-web"
         exclude group: "org.springframework.boot", module: "spring-boot-starter-validation"
