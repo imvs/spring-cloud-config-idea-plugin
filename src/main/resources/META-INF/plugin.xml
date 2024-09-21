@@ -50,13 +50,13 @@
         </action>
     </actions>
     <change-notes><![CDATA[
-        <h2>1.0.2</h2>
+        <h3>1.0.2</h3>
             <ul>
                 <li>Improved description</li>
             </ul>
-        <h2>1.0.3</h2>
+        <h3>1.0.3</h3>
             <ul>
-                <li>Compatibility Range: 231.* - 242.*</li>
+                <li>Compatibility Range: 231 - 242.*</li>
             </ul>
     ]]></change-notes>
 </idea-plugin>

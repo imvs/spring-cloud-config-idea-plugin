@@ -39,7 +39,7 @@ tasks {
     }
 
     patchPluginXml {
-        sinceBuild = provider { "231.*" }
+        sinceBuild = provider { "231" }
         untilBuild = provider { "242.*" }
     }
 }
