@@ -1,16 +1,16 @@
 plugins {
     id("java")
     id("org.jetbrains.intellij.platform") version "2.0.1"
-    id("pl.allegro.tech.build.axion-release") version "1.18.7"
 }
 
 group = "com.github.imvs"
 
-scmVersion {
-    ignoreUncommittedChanges.set(false)
-}
+project.version = "1.0.3"
 
-project.version = scmVersion.version
+java {
+    sourceCompatibility = "17"
+    targetCompatibility = "17"
+}
 
 repositories {
     mavenCentral()
@@ -27,11 +27,6 @@ intellijPlatform {
     }
 }
 
-java {
-    sourceCompatibility = "17"
-    targetCompatibility = "17"
-}
-
 tasks {
     signPlugin {
         certificateChain.set(project.property("signPlugin.certificateChain").toString())
@@ -44,8 +39,8 @@ tasks {
     }
 
     patchPluginXml {
-        sinceBuild = provider { "232.10300" }
-        untilBuild = provider { null }
+        sinceBuild = provider { "231.*" }
+        untilBuild = provider { "242.*" }
     }
 }
 
