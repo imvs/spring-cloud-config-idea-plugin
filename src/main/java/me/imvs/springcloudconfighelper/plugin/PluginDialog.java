@@ -8,10 +8,7 @@ import javax.swing.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import java.io.*;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.Properties;
@@ -38,6 +35,7 @@ public class PluginDialog extends JDialog {
     private Properties properties;
 
     public PluginDialog(Project project) throws IOException {
+        setResizable(false);
         this.project = project;
         fileSupport = new FileSupport(getBaseDir());
         setContentPane(contentPane);

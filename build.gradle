@@ -51,8 +51,8 @@ changelog {
     repositoryUrl.set("https://github.com/imvs/spring-cloud-config-idea-plugin/")
     version = project.getVersion().toString().replace("-SNAPSHOT", "")
     itemPrefix = "-"
-    keepUnreleasedSection = false
-    unreleasedTerm = "[Unreleased]"
+    keepUnreleasedSection = true
+    unreleasedTerm = "Unreleased"
     groups = []
     combinePreReleases = true
 }
@@ -76,7 +76,7 @@ tasks {
                         .getAll()
                         .drop(1)
                         .collect { key, value -> changelog.renderItem(value, Changelog.OutputType.HTML) }
-                        .inject("", { ver1, ver2 -> ver1 + "\n" + ver2 })
+                        .inject("", { ver1, ver2 -> ver1 + ver2 })
         )
     }
 }
