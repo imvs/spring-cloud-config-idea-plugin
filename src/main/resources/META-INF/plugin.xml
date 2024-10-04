@@ -25,8 +25,14 @@
     <actions>
         <action id="me.imvs.springcloudconfighelper.plugin.ProfilesMergerPlugin"
                 class="me.imvs.springcloudconfighelper.plugin.ProfilesMergerPlugin" text="Merge Profiles"
-                description="Merge Spring application profiles">
+                description="Merge Spring application profiles"
+                icon="/icons/notification.svg">
             <keyboard-shortcut keymap="$default" first-keystroke="shift ctrl P" second-keystroke="shift ctrl M"/>
         </action>
+
     </actions>
+    <extensions defaultExtensionNs="com.intellij">
+        <notificationGroup id="Spring Profiles Merger Group"
+                           displayType="BALLOON"/>
+    </extensions>
 </idea-plugin>

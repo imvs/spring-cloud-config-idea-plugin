@@ -1,0 +1,23 @@
+<svg version="1.1" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="1089.5,639,16,16">
+    <g id="document" fill-opacity="0" fill="#ffffff" fill-rule="nonzero" stroke-opacity="0" stroke="#000000"
+       stroke-width="0" stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="10" stroke-dasharray=""
+       stroke-dashoffset="0" font-family="none" font-size="none"
+       style="mix-blend-mode: normal">
+        <rect x="47665.625" y="27956.25" transform="scale(0.02286,0.02286)" width="700" height="700" id="Shape 1 1"
+              vector-effect="non-scaling-stroke"/>
+    </g>
+    <g fill="none" fill-rule="nonzero" stroke-opacity="0" stroke="#000000" stroke-width="1" stroke-linecap="round"
+       stroke-linejoin="round" stroke-miterlimit="10" stroke-dasharray="" stroke-dashoffset="0" font-family="none"
+       font-size="none" style="mix-blend-mode: normal">
+        <g id="stage">
+            <g id="layer1 1">
+                <path d="M1101.43995,640.20657l3.93997,6.75421l-3.93997,6.75421h-7.87991l-3.93997,-6.75421l3.93997,-6.75421z"
+                      id="Path 1" fill="#90c168"/>
+                <path d="M1093.30995,650.79848v-4h1.98009v4z" id="Path 1" fill="#0d0405"/>
+                <path d="M1096.5199,650.79848v-4h1.98009v4z" id="Path 1" fill="#0d0405"/>
+                <path d="M1099.70995,650.79848v-4h1.98009v4z" id="Path 1" fill="#0d0405"/>
+                <path d="M1093.13805,645.49403l4.36195,-3.55825l4.36195,3.55825z" id="Path 1" fill="#0d0405"/>
+            </g>
+        </g>
+    </g>
+</svg>
