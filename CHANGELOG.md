@@ -2,6 +2,11 @@
 
 ## [Unreleased]
 
+## [1.0.5] - 2024-10-04
+- Improved UI design
+- Add validation
+- Add notifications
+
 ## [1.0.4] - 2024-09-24
 - Fix the appearance of error messages
 
@@ -11,7 +16,8 @@
 ## [1.0.2] - 2024-09-16
 - Improved description
 
-[Unreleased]: https://github.com/imvs/spring-cloud-config-idea-plugin//compare/v1.0.4...HEAD
+[Unreleased]: https://github.com/imvs/spring-cloud-config-idea-plugin//compare/v1.0.5...HEAD
+[1.0.5]: https://github.com/imvs/spring-cloud-config-idea-plugin//compare/v1.0.4...v1.0.5
 [1.0.4]: https://github.com/imvs/spring-cloud-config-idea-plugin//compare/v1.0.3...v1.0.4
 [1.0.3]: https://github.com/imvs/spring-cloud-config-idea-plugin//compare/v1.0.2...v1.0.3
 [1.0.2]: https://github.com/imvs/spring-cloud-config-idea-plugin//commits/v1.0.2

@@ -1,6 +1,7 @@
 package me.imvs.springcloudconfighelper;
 
 import io.micrometer.observation.ObservationRegistry;
+import me.imvs.springcloudconfighelper.plugin.PluginHelper;
 import org.springframework.cloud.config.environment.PropertySource;
 import org.springframework.cloud.config.server.environment.NativeEnvironmentProperties;
 import org.springframework.cloud.config.server.environment.NativeEnvironmentRepository;
@@ -14,7 +15,6 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 public class CollectionsMerger {
-    static final String PROFILE_SPLIT_REGEX = "\\s*,\\s*";
     static final String PROFILE_TOKEN_REGEX = "-(.*)\\.\\w+";
 
     public Map<String, Object> merge(String[] locations, String application, String profile) {
@@ -22,9 +22,6 @@ public class CollectionsMerger {
     }
 
     public Map<String, Object> merge(String[] locations, int order, String application, String profile) {
-        if (application == null || application.isBlank()) {
-            throw new IllegalArgumentException("Application name not specified");
-        }
         Map<String, Object> result = new LinkedHashMap<>();
         NativeEnvironmentRepository repository = getRepository(getProperties(locations, order));
         Map<String, ? extends Map<?, ?>> propertySources = repository
@@ -38,12 +35,12 @@ public class CollectionsMerger {
                         PropertySource::getSource)
                 );
         if (propertySources.isEmpty()) {
-            throw new IllegalStateException("Property sources are empty");
+            throw new PropertySourceEmptyException();
         }
-        for (String p : profile.split(PROFILE_SPLIT_REGEX)) {
+        for (String p : PluginHelper.splitCommaSeparated(profile)) {
             Map<?, ?> map = propertySources.get(p);
             if (map == null) {
-                throw new IllegalStateException("No property source for profile: " + p);
+                throw new ProfileNotFoundException(p);
             }
             Map<String, Object> unFlatten = unFlat(map);
             result = combine(result, unFlatten);
@@ -51,19 +48,37 @@ public class CollectionsMerger {
         return result;
     }
 
-    NativeEnvironmentProperties getProperties(String[] locations, int order) {
+    public NativeEnvironmentProperties getProperties(String[] locations, int order) {
         NativeEnvironmentProperties properties = new NativeEnvironmentProperties();
         properties.setSearchLocations(locations);
         properties.setOrder(order);
         return properties;
     }
 
-    NativeEnvironmentRepository getRepository(NativeEnvironmentProperties properties) {
+    public NativeEnvironmentRepository getRepository(NativeEnvironmentProperties properties) {
         ConfigurableEnvironment environment = new StandardEnvironment();
         return new NativeEnvironmentRepository(environment, properties, ObservationRegistry.NOOP);
     }
 
-    Map<String, Object> combine(Object oldValue, Map<String, Object> map) {
+    public Map<String, Object> unFlat(Map<?, ?> flatMap) {
+        return flatMap.keySet()
+                .stream()
+                .map(s -> {
+                    if (s instanceof String str) {
+                        LinkedList<String> list = new LinkedList<>(Arrays.asList(str.split("\\.")));
+                        list.add(str);
+                        return list;
+                    }
+                    if (s == null) {
+                        return null;
+                    }
+                    throw new IllegalArgumentException("Bad key type: " + s.getClass().getName());
+                })
+                .filter(Objects::nonNull)
+                .reduce(new LinkedHashMap<>(), (map, keys) -> accumulator(map, keys, flatMap), this::mergeMaps);
+    }
+
+    private Map<String, Object> combine(Object oldValue, Map<String, Object> map) {
         if (oldValue instanceof Map) {
             //noinspection unchecked
             Map<String, Object> oldMap = (Map<String, Object>) oldValue;
@@ -84,24 +99,6 @@ public class CollectionsMerger {
         } else {
             return new LinkedHashMap<>(map);
         }
-    }
-
-    Map<String, Object> unFlat(Map<?, ?> flatMap) {
-        return flatMap.keySet()
-                .stream()
-                .map(s -> {
-                    if (s instanceof String str) {
-                        LinkedList<String> list = new LinkedList<>(Arrays.asList(str.split("\\.")));
-                        list.add(str);
-                        return list;
-                    }
-                    if (s == null) {
-                        return null;
-                    }
-                    throw new IllegalArgumentException("Bad key type: " + s.getClass().getName());
-                })
-                .filter(Objects::nonNull)
-                .reduce(new LinkedHashMap<>(), (map, keys) -> accumulator(map, keys, flatMap), this::mergeMaps);
     }
 
     LinkedHashMap<String, Object> accumulator(LinkedHashMap<String, Object> map, LinkedList<String> keys, Map<?, ?> flatMap) {

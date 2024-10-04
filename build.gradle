@@ -1,7 +1,9 @@
 import org.jetbrains.changelog.Changelog
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
     id "java"
+    id "org.jetbrains.kotlin.jvm" version "2.0.20"
     id "org.jetbrains.intellij.platform" version "2.0.1"
     id "pl.allegro.tech.build.axion-release" version "1.18.9"
     id "org.jetbrains.changelog" version "2.0.0"
@@ -10,12 +12,13 @@ plugins {
 group = "com.github.imvs"
 
 ext {
-    pluignSinceBuild = "231"
+    pluignSinceBuild = "232"
     pluignUntilBuild = "242.*"
 }
 
 scmVersion {
     useHighestVersion = true
+    ignoreUncommittedChanges = false
     checks {
         snapshotDependencies = false
         uncommittedChanges = true
@@ -30,6 +33,12 @@ project.version = scmVersion.version
 java {
     sourceCompatibility = JavaVersion.VERSION_17
     targetCompatibility = JavaVersion.VERSION_17
+}
+
+tasks.withType(KotlinCompile).configureEach {
+    kotlinOptions {
+        jvmTarget = "17"
+    }
 }
 
 repositories {
@@ -91,6 +100,7 @@ dependencies {
         zipSigner()
     }
 
+    //noinspection VulnerableLibrariesLocal
     implementation("org.springframework.cloud:spring-cloud-config-server:4.1.0") {
         exclude group: "org.springframework.boot", module: "spring-boot-starter-web"
         exclude group: "org.springframework.boot", module: "spring-boot-starter-validation"

@@ -9,7 +9,6 @@ import org.springframework.cloud.config.server.environment.NativeEnvironmentProp
 import org.springframework.cloud.config.server.environment.NativeEnvironmentRepository;
 import org.springframework.core.Ordered;
 
-import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
@@ -32,17 +31,6 @@ public class UnitTests {
     };
 
     public UnitTests() throws URISyntaxException {
-    }
-
-    @Test
-    public void loadPropertyFileSuccess() throws IOException {
-        FileSupport fileSupport = new FileSupport();
-        File propertiesFile = fileSupport.getPropertiesFile("build");
-        boolean ignored = propertiesFile.createNewFile();
-        Assertions.assertTrue(propertiesFile.exists());
-        Assertions.assertTrue(propertiesFile.isFile());
-        Assertions.assertEquals("spring-cloud-config-helper.properties", propertiesFile.getName());
-        Assertions.assertTrue(propertiesFile.getParentFile().toURI().normalize().toString().endsWith("build/tmp/"));
     }
 
     @Test
@@ -114,8 +102,7 @@ public class UnitTests {
                 Objects.requireNonNull(this.getClass().getClassLoader().getResource("specials")).toURI().getPath()
         };
         Map<String, Object> map = collectionsMerger.merge(locations, application, "special,default");
-        FileSupport fileSupport = new FileSupport();
-        Path path = fileSupport.writeYaml(map, "build/tmp/temp-single.yml");
+        Path path = FilesHelper.writeYaml(map, Path.of("build/tmp/temp-single.yml"));
         String ymlString = Files.readString(path);
         log.info("Application: {}, profile: {}\n{}", application, "special,default", map);
         Assertions.assertEquals("""
@@ -129,6 +116,7 @@ public class UnitTests {
                     default: 0
                 """, ymlString);
     }
+
     @Test
     public void mergeDefaultThanSpecialSuccess() throws IOException, URISyntaxException {
         CollectionsMerger collectionsMerger = new CollectionsMerger();
@@ -137,8 +125,7 @@ public class UnitTests {
                 Objects.requireNonNull(this.getClass().getClassLoader().getResource("specials")).toURI().getPath()
         };
         Map<String, Object> map = collectionsMerger.merge(locations, application, "Default,Special");
-        FileSupport fileSupport = new FileSupport();
-        Path path = fileSupport.writeYaml(map, "build/tmp/temp-single.yml");
+        Path path = FilesHelper.writeYaml(map, Path.of("build/tmp/temp-single.yml"));
         String ymlString = Files.readString(path);
         log.info("Application: {}, profile: {}\n{}", application, "special,default", map);
         Assertions.assertEquals("""
