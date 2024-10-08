@@ -6,7 +6,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.ui.RecentsManager;
-import me.imvs.springcloudconfighelper.CollectionsMerger;
+import me.imvs.springcloudconfighelper.core.ProfilesMerger;
 import me.imvs.springcloudconfighelper.FilesHelper;
 import me.imvs.springcloudconfighelper.ProfileNotFoundException;
 import me.imvs.springcloudconfighelper.PropertySourceEmptyException;
@@ -62,8 +62,8 @@ public class ProfilesMergerPlugin extends AnAction {
     private @Nullable VirtualFile merge(Project project, PluginModel model) {
         String[] locations = validateLocations(project, model.getSearchLocations());
         String outFile = validateOutFile(project, model);
-        CollectionsMerger collectionsMerger = new CollectionsMerger();
-        Map<String, Object> mergeResult = collectionsMerger
+        ProfilesMerger profilesMerger = new ProfilesMerger();
+        Map<String, Object> mergeResult = profilesMerger
                 .merge(locations, model.getAppName(), model.getProfiles());
         try {
             Path path = FilesHelper.getFilePath(project, outFile);

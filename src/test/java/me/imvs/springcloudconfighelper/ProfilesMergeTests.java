@@ -1,6 +1,8 @@
 package me.imvs.springcloudconfighelper;
 
 import lombok.extern.slf4j.Slf4j;
+import me.imvs.springcloudconfighelper.core.ProfilesMerger;
+import me.imvs.springcloudconfighelper.core.PropertiesParser;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
@@ -21,7 +23,7 @@ import java.util.stream.Collectors;
 
 @Slf4j
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-public class UnitTests {
+public class ProfilesMergeTests {
 
     String application = "test";
     String[] profiles = new String[]{"default", "special"};
@@ -30,7 +32,7 @@ public class UnitTests {
             Objects.requireNonNull(this.getClass().getClassLoader().getResource("specials")).toURI().getPath()
     };
 
-    public UnitTests() throws URISyntaxException {
+    public ProfilesMergeTests() throws URISyntaxException {
     }
 
     @Test
@@ -56,18 +58,17 @@ public class UnitTests {
     public void readBothPropertiesSuccess() {
         List<Map<String, Object>> source = map(profiles, Ordered.LOWEST_PRECEDENCE);
         Assertions.assertEquals(2, source.size());
-        Assertions.assertEquals("{test.list[0]=first, test.list[1]=second, test.dict.default=0, test.dict.foo=bar}",source.get(0).toString());
-        Assertions.assertEquals("{test.list=string, test.dict.foo=overridden, test.dict.add=more}",source.get(1).toString());
+        Assertions.assertEquals("{test.list[0]=first, test.list[1]=second, test.list[2]=third, test.dict.default=0, test.dict.foo=bar}", source.get(0).toString());
+        Assertions.assertEquals("{test.list=string, test.dict.foo=overridden, test.dict.add=more}", source.get(1).toString());
         source = map(profiles, Ordered.HIGHEST_PRECEDENCE);
         Assertions.assertEquals(2, source.size());
-        Assertions.assertEquals("{test.list[0]=first, test.list[1]=second, test.dict.default=0, test.dict.foo=bar}",source.get(0).toString());
-        Assertions.assertEquals("{test.list=string, test.dict.foo=overridden, test.dict.add=more}",source.get(1).toString());
+        Assertions.assertEquals("{test.list[0]=first, test.list[1]=second, test.list[2]=third, test.dict.default=0, test.dict.foo=bar}", source.get(0).toString());
+        Assertions.assertEquals("{test.list=string, test.dict.foo=overridden, test.dict.add=more}", source.get(1).toString());
     }
 
     @Test
     public void unFlatDefaultPropertiesSuccess() {
-        CollectionsMerger collectionsMerger = new CollectionsMerger();
-        Map<String, Object> map = collectionsMerger.unFlat(map(profiles[0], Ordered.LOWEST_PRECEDENCE));
+        Map<String, Object> map = PropertiesParser.toMap(map(profiles[0], Ordered.LOWEST_PRECEDENCE));
         log.info("Application: {}, profile: {}\n{}", application, profiles[0], map);
         //noinspection unchecked
         Map<String, Object> dict = (Map<String, Object>) ((Map<String, Object>) map.get("test")).get("dict");
@@ -75,15 +76,15 @@ public class UnitTests {
         Assertions.assertEquals(0, dict.get("default"));
         //noinspection unchecked
         List<String> list = (List<String>) ((Map<String, Object>) map.get("test")).get("list");
-        Assertions.assertEquals(2, list.size());
+        Assertions.assertEquals(3, list.size());
         Assertions.assertEquals("first", list.get(0));
         Assertions.assertEquals("second", list.get(1));
+        Assertions.assertEquals("third", list.get(2));
     }
 
     @Test
     public void unFlatSpecialPropertiesSuccess() {
-        CollectionsMerger collectionsMerger = new CollectionsMerger();
-        Map<String, Object> map = collectionsMerger.unFlat(map(profiles[1], Ordered.LOWEST_PRECEDENCE));
+        Map<String, Object> map = PropertiesParser.toMap(map(profiles[1], Ordered.LOWEST_PRECEDENCE));
         log.info("Application: {}, profile: {}\n{}", application, profiles[1], map);
         //noinspection unchecked
         Map<String, Object> dict = (Map<String, Object>) ((Map<String, Object>) map.get("test")).get("dict");
@@ -95,13 +96,9 @@ public class UnitTests {
     }
 
     @Test
-    public void mergeSpecialThanDefaultSuccess() throws IOException, URISyntaxException {
-        CollectionsMerger collectionsMerger = new CollectionsMerger();
-        String[] locations = new String[]{
-                Objects.requireNonNull(this.getClass().getClassLoader().getResource("profiles")).toURI().getPath(),
-                Objects.requireNonNull(this.getClass().getClassLoader().getResource("specials")).toURI().getPath()
-        };
-        Map<String, Object> map = collectionsMerger.merge(locations, application, "special,default");
+    public void mergeSpecialThanDefaultSuccess() throws IOException {
+        ProfilesMerger profilesMerger = new ProfilesMerger();
+        Map<String, Object> map = profilesMerger.merge(locations, application, "special,default");
         Path path = FilesHelper.writeYaml(map, Path.of("build/tmp/temp-single.yml"));
         String ymlString = Files.readString(path);
         log.info("Application: {}, profile: {}\n{}", application, "special,default", map);
@@ -110,6 +107,7 @@ public class UnitTests {
                   list:
                   - "first"
                   - "second"
+                  - "third"
                   dict:
                     foo: "bar"
                     add: "more"
@@ -118,24 +116,20 @@ public class UnitTests {
     }
 
     @Test
-    public void mergeDefaultThanSpecialSuccess() throws IOException, URISyntaxException {
-        CollectionsMerger collectionsMerger = new CollectionsMerger();
-        String[] locations = new String[]{
-                Objects.requireNonNull(this.getClass().getClassLoader().getResource("profiles")).toURI().getPath(),
-                Objects.requireNonNull(this.getClass().getClassLoader().getResource("specials")).toURI().getPath()
-        };
-        Map<String, Object> map = collectionsMerger.merge(locations, application, "Default,Special");
+    public void mergeDefaultThanSpecialSuccess() throws IOException {
+        ProfilesMerger profilesMerger = new ProfilesMerger();
+        Map<String, Object> map = profilesMerger.merge(locations, application, "Default,Special");
         Path path = FilesHelper.writeYaml(map, Path.of("build/tmp/temp-single.yml"));
         String ymlString = Files.readString(path);
         log.info("Application: {}, profile: {}\n{}", application, "special,default", map);
         Assertions.assertEquals("""
-               test:
-                 list: "string"
-                 dict:
-                   default: 0
-                   foo: "overridden"
-                   add: "more"
-                """, ymlString);
+                test:
+                  list: "string"
+                  dict:
+                    default: 0
+                    foo: "overridden"
+                    add: "more"
+                 """, ymlString);
     }
 
     private List<Map<String, Object>> map(String[] profiles, int order) {
@@ -145,9 +139,9 @@ public class UnitTests {
     }
 
     private Map<String, Object> map(String profile, int order) {
-        CollectionsMerger collectionsMerger = new CollectionsMerger();
-        NativeEnvironmentProperties properties = collectionsMerger.getProperties(locations, order);
-        NativeEnvironmentRepository repository = collectionsMerger.getRepository(properties);
+        ProfilesMerger profilesMerger = new ProfilesMerger();
+        NativeEnvironmentProperties properties = profilesMerger.getProperties(locations, order);
+        NativeEnvironmentRepository repository = profilesMerger.getRepository(properties);
         Environment one = repository.findOne(application, profile, null);
         Assertions.assertEquals(1, one.getPropertySources().size());
         //noinspection unchecked

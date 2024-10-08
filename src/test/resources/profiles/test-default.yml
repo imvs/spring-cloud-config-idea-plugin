@@ -3,6 +3,7 @@ test:
   list:
     - first
     - second
+    - third
   dict:
     default: 0
     foo: bar
