@@ -25,9 +25,9 @@ Or manually from [**JETBRAINS Marketplace**](https://plugins.jetbrains.com/) - w
   <li>Set the values:
     <ul>
       <li><b>Application name</b> - Spring application name (aka <samp>spring.application.name</samp>)</li>
-      <li><b>Profiles</b> - Comma separated profiles names (aka as <samp>spring.profiles.active</samp>)</li>
+      <li><b>Active profiles</b> - Comma separated profiles names (aka as <samp>spring.profiles.active</samp>)</li>
       <li><b>Search locations</b> - Comma separated directories contained configuration files</li>
-      <li><b>Output file</b> - Where to save merged configuration</li>
+      <li><b>Output path</b> - Where to save merged configuration</li>
     </ul>
   </li>
 </ol>
