@@ -30,7 +30,7 @@ public class ProfilesMergerDialogWrapper extends DialogWrapper {
     @Override
     protected @Nullable JComponent createCenterPanel() {
         DialogPanel dialogPanel = new UiDsl(pluginModel).pluginPanel(project);
-        dialogPanel.setPreferredSize(new Dimension(400, 0));
+        dialogPanel.setPreferredSize(new Dimension(500, 0));
         return dialogPanel;
     }
 }

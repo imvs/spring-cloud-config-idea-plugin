@@ -2,6 +2,9 @@
 
 ## [Unreleased]
 
+## [1.2.2] - 2024-10-08
+- Minor changes
+
 ## [1.2.1] - 2024-10-08
 - Fix IndexOutOfBoundsException
 
@@ -19,7 +22,8 @@
 ## [1.0.2] - 2024-09-16
 - Improved description
 
-[Unreleased]: https://github.com/imvs/spring-cloud-config-idea-plugin//compare/v1.2.1...HEAD
+[Unreleased]: https://github.com/imvs/spring-cloud-config-idea-plugin//compare/v1.2.2...HEAD
+[1.2.2]: https://github.com/imvs/spring-cloud-config-idea-plugin//compare/v1.2.1...v1.2.2
 [1.2.1]: https://github.com/imvs/spring-cloud-config-idea-plugin//compare/v1.2.0...v1.2.1
 [1.2.0]: https://github.com/imvs/spring-cloud-config-idea-plugin//compare/v1.0.4...v1.2.0
 [1.0.5]: https://github.com/imvs/spring-cloud-config-idea-plugin//compare/v1.0.4...v1.0.5
