@@ -12,15 +12,17 @@ import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.fileEditor.OpenFileDescriptor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.ui.RecentsManager;
 import com.intellij.ui.components.JBTextField;
 import com.intellij.ui.components.fields.ExpandableTextField;
 import com.intellij.ui.components.fields.ExtendableTextComponent;
 import com.intellij.ui.components.fields.ExtendableTextField;
 import com.intellij.util.Consumer;
-import me.imvs.springcloudconfighelper.ProfileNotFoundException;
+import me.imvs.springcloudconfighelper.ProfilesNotFoundException;
 import me.imvs.springcloudconfighelper.plugin.PluginBundle;
 import me.imvs.springcloudconfighelper.plugin.PluginException;
 import me.imvs.springcloudconfighelper.plugin.PluginIcons;
+import me.imvs.springcloudconfighelper.plugin.model.PluginModel;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -156,7 +158,7 @@ public class UiHelper {
                 .notify(project);
     }
 
-    public void showPropertySourceEmtyNotification(@Nullable Project project) {
+    public void showPropertySourceEmptyNotification(@NotNull Project project) {
         NotificationGroupManager.getInstance()
                 .getNotificationGroup("Spring Profiles Merger Group")
                 .createNotification(
@@ -168,14 +170,21 @@ public class UiHelper {
 
     }
 
-    public void showProfileNotFoundNotification(@Nullable Project project, ProfileNotFoundException ex) {
+    public void showProfilesNotFoundNotification(@NotNull Project project, ProfilesNotFoundException ex) {
         NotificationGroupManager.getInstance()
                 .getNotificationGroup("Spring Profiles Merger Group")
                 .createNotification(
                         PluginBundle.property("message.failed"),
-                        PluginBundle.message("message.no.profile.title", ex.getProfile()),
+                        PluginBundle.message("message.no.profiles.title", ex.getProfiles()),
                         NotificationType.WARNING
                 )
+                .addAction(NotificationAction.create(
+                        PluginBundle.property("message.exclude.non.existing.profiles"), anActionEvent -> {
+                            RecentsManager manager = RecentsManager.getInstance(project);
+                            PluginModel pluginModel = new PluginModel(manager);
+                            pluginModel.removeProfiles(ex.getProfiles());
+                            pluginModel.saveRecent(manager);
+                        }))
                 .notify(project);
     }
 

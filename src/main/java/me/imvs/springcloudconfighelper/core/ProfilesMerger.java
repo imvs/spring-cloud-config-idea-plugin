@@ -2,7 +2,7 @@ package me.imvs.springcloudconfighelper.core;
 
 import io.micrometer.observation.ObservationRegistry;
 import me.imvs.springcloudconfighelper.DupplicatedPropertySourcesException;
-import me.imvs.springcloudconfighelper.ProfileNotFoundException;
+import me.imvs.springcloudconfighelper.ProfilesNotFoundException;
 import me.imvs.springcloudconfighelper.PropertySourceEmptyException;
 import org.springframework.cloud.config.environment.PropertySource;
 import org.springframework.cloud.config.server.environment.NativeEnvironmentProperties;
@@ -13,8 +13,7 @@ import org.springframework.core.env.StandardEnvironment;
 
 import java.net.URI;
 import java.nio.file.Path;
-import java.util.LinkedHashMap;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class ProfilesMerger {
@@ -44,13 +43,25 @@ public class ProfilesMerger {
         if (propertySources.isEmpty()) {
             throw new PropertySourceEmptyException();
         }
-        for (String p : profile.split("\\s*,\\s*")) {
+        for (Map<String, Object> propertySource : propertySources(profile.split("\\s*,\\s*"), propertySources)) {
+            result = merge(result, propertySource);
+        }
+        return result;
+    }
+
+    private Collection<Map<String, Object>> propertySources(String[] profiles, Map<String, ? extends Map<?, ?>> propertySources) {
+        Collection<String> nullProfiles = new HashSet<>();
+        Collection<Map<String, Object>> result = new ArrayList<>();
+        for (String p : profiles) {
             Map<?, ?> properties = propertySources.get(p);
             if (properties == null) {
-                throw new ProfileNotFoundException(p);
+                nullProfiles.add(p);
+                continue;
             }
-            Map<String, Object> map = PropertiesParser.toMap(properties);
-            result = merge(result, map);
+            result.add(PropertiesParser.toMap(properties));
+        }
+        if (!nullProfiles.isEmpty()) {
+            throw new ProfilesNotFoundException(nullProfiles);
         }
         return result;
     }

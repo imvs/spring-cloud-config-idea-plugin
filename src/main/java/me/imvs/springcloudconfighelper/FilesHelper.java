@@ -75,7 +75,7 @@ public class FilesHelper {
         return model.getOutFile();
     }
 
-    public static String[] validateLocations(Project project, String locations) {
+    public static String[] validateDirectories(Project project, String locations) {
         if (locations.isBlank()) {
             return new String[]{getBaseDir(project)};
         }

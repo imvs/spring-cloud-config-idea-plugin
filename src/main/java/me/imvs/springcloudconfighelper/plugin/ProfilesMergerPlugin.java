@@ -2,13 +2,14 @@ package me.imvs.springcloudconfighelper.plugin;
 
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
+import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.ui.RecentsManager;
 import me.imvs.springcloudconfighelper.core.ProfilesMerger;
 import me.imvs.springcloudconfighelper.FilesHelper;
-import me.imvs.springcloudconfighelper.ProfileNotFoundException;
+import me.imvs.springcloudconfighelper.ProfilesNotFoundException;
 import me.imvs.springcloudconfighelper.PropertySourceEmptyException;
 import me.imvs.springcloudconfighelper.plugin.model.PluginModel;
 import me.imvs.springcloudconfighelper.plugin.ui.ProfilesMergerDialogWrapper;
@@ -21,7 +22,7 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Map;
 
-import static me.imvs.springcloudconfighelper.FilesHelper.validateLocations;
+import static me.imvs.springcloudconfighelper.FilesHelper.validateDirectories;
 import static me.imvs.springcloudconfighelper.FilesHelper.validateOutFile;
 
 public class ProfilesMergerPlugin extends AnAction {
@@ -30,6 +31,7 @@ public class ProfilesMergerPlugin extends AnAction {
 
     @Override
     public void actionPerformed(@NotNull AnActionEvent e) {
+        FileDocumentManager.getInstance().saveAllDocuments();
         Thread.currentThread().setContextClassLoader(this.getClass().getClassLoader());
         Project project = e.getProject();
         if (project == null) {
@@ -49,9 +51,9 @@ public class ProfilesMergerPlugin extends AnAction {
                 }
             }
         } catch (PropertySourceEmptyException ex) {
-            uiHelper.showPropertySourceEmtyNotification(e.getProject());
-        } catch (ProfileNotFoundException ex) {
-            uiHelper.showProfileNotFoundNotification(e.getProject(), ex);
+            uiHelper.showPropertySourceEmptyNotification(e.getProject());
+        } catch (ProfilesNotFoundException ex) {
+            uiHelper.showProfilesNotFoundNotification(e.getProject(), ex);
         } catch (PluginException t) {
             uiHelper.showExpectedErrorNotification(e.getProject(), t);
         } catch (Throwable t) {
@@ -60,7 +62,7 @@ public class ProfilesMergerPlugin extends AnAction {
     }
 
     private @Nullable VirtualFile merge(Project project, PluginModel model) {
-        String[] locations = validateLocations(project, model.getSearchLocations());
+        String[] locations = validateDirectories(project, model.getSearchLocations());
         String outFile = validateOutFile(project, model);
         ProfilesMerger profilesMerger = new ProfilesMerger();
         Map<String, Object> mergeResult = profilesMerger
@@ -70,9 +72,11 @@ public class ProfilesMergerPlugin extends AnAction {
             FilesHelper.getDir(new File(path.getParent().toUri()), true, null);
             FilesHelper.reWriteYaml(mergeResult, path);
             LocalFileSystem fs = LocalFileSystem.getInstance();
-            return fs.refreshAndFindFileByIoFile(new File(path.toUri()));
+            return fs.findFileByIoFile(new File(path.toUri()));
         } catch (IOException e) {
             throw new PluginException(PluginBundle.property("message.error.expected.outfile"), e);
         }
     }
+
+
 }

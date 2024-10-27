@@ -2,7 +2,10 @@ package me.imvs.springcloudconfighelper.plugin.model;
 
 import com.intellij.ui.RecentsManager;
 
-@SuppressWarnings("LombokGetterMayBeUsed")
+import java.util.Arrays;
+import java.util.Collection;
+
+@SuppressWarnings({"LombokGetterMayBeUsed", "LombokSetterMayBeUsed"})
 public final class PluginModel {
 
     private static final String APP_NAME_KEY = "appName";
@@ -71,5 +74,13 @@ public final class PluginModel {
 
     public String toString() {
         return "PluginModel(appName=" + this.getAppName() + ", profiles=" + this.getProfiles() + ", searchLocations=" + this.getSearchLocations() + ", outFile=" + this.getOutFile() + ")";
+    }
+
+    public void removeProfiles(Collection<String> notExistingProfiles) {
+        String profiles = Arrays.stream(getProfiles().split("\\s*,\\s*"))
+                .filter(p -> !notExistingProfiles.contains(p))
+                .reduce((p, p2) -> p + ", " + p2)
+                .orElse("");
+        setProfiles(profiles);
     }
 }
