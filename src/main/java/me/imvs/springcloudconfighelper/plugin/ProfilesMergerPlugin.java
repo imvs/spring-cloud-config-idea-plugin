@@ -72,11 +72,9 @@ public class ProfilesMergerPlugin extends AnAction {
             FilesHelper.getDir(new File(path.getParent().toUri()), true, null);
             FilesHelper.reWriteYaml(mergeResult, path);
             LocalFileSystem fs = LocalFileSystem.getInstance();
-            return fs.findFileByIoFile(new File(path.toUri()));
+            return fs.refreshAndFindFileByNioFile(path);
         } catch (IOException e) {
             throw new PluginException(PluginBundle.property("message.error.expected.outfile"), e);
         }
     }
-
-
 }

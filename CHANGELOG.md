@@ -2,6 +2,9 @@
 
 ## [Unreleased]
 
+## [1.2.4] - 2024-10-30
+- Fix an issue when merge notification doesn't appear with new output file
+
 ## [1.2.3] - 2024-10-27
 - Force save project before merge
 - Show all not existing profiles
@@ -27,7 +30,8 @@
 ## [1.0.2] - 2024-09-16
 - Improved description
 
-[Unreleased]: https://github.com/imvs/spring-cloud-config-idea-plugin//compare/v1.2.3...HEAD
+[Unreleased]: https://github.com/imvs/spring-cloud-config-idea-plugin//compare/v1.2.4...HEAD
+[1.2.4]: https://github.com/imvs/spring-cloud-config-idea-plugin//compare/v1.2.3...v1.2.4
 [1.2.3]: https://github.com/imvs/spring-cloud-config-idea-plugin//compare/v1.2.2...v1.2.3
 [1.2.2]: https://github.com/imvs/spring-cloud-config-idea-plugin//compare/v1.2.1...v1.2.2
 [1.2.1]: https://github.com/imvs/spring-cloud-config-idea-plugin//compare/v1.2.0...v1.2.1

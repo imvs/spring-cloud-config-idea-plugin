@@ -13,9 +13,9 @@
               <li>Set the values:
                 <ul>
                   <li><b>Application Name</b> - Spring application name (aka <samp>spring.application.name</samp>)</li>
-                  <li><b>Profiles</b> - Comma separated profiles names (aka <samp>spring.profiles.active</samp>)</li>
-                  <li><b>Search Locations</b> - Comma separated directories contained configuration files</li>
-                  <li><b>Output File</b> - Where to save merged configuration</li>
+                  <li><b>Active profiles</b> - Comma-separated string of profiles names (aka <samp>spring.profiles.active</samp>)</li>
+                  <li><b>Search locations</b> - Comma-separated string of directories contained configurations</li>
+                  <li><b>Output path</b> - Where to save merged configuration</li>
                   </ul>
               </li>
             </ol>
@@ -32,7 +32,6 @@
 
     </actions>
     <extensions defaultExtensionNs="com.intellij">
-        <notificationGroup id="Spring Profiles Merger Group"
-                           displayType="BALLOON"/>
+        <notificationGroup id="Spring Profiles Merger Group" displayType="BALLOON"/>
     </extensions>
 </idea-plugin>
