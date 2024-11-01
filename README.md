@@ -3,21 +3,21 @@
 Merge Spring application profiles into a single pretty YAML configuration.
 
 ---
-Plugin based on Spring Cloud Config API. I's very handy for debugging configurations with many profiles.
+Plugin based on Spring Cloud Config API. It's very handy for debugging configurations with many profiles.
 
 ## Installation
 
 Directly in the IDE plugins section:
 
-* open `File --> Settings... --> Plugins --> Marketplace`
-* search for: `Spring Profiles Merger`
-* click `Install`
+* Open `File --> Settings... --> Plugins --> Marketplace`
+* Search for: `Spring Profiles Merger`
+* Click `Install`
 
 Or manually from [**JETBRAINS Marketplace**](https://plugins.jetbrains.com/) - website:
- * go to the [plugin page](https://plugins.jetbrains.com/plugin/25327-spring-profiles-merger)
- * download the plugin archive
- * open `File --> Settings... --> Plugins`
- * click **cogwheel button** and select `Install plugin from disk`
+ * Go to the [plugin page](https://plugins.jetbrains.com/plugin/25327-spring-profiles-merger)
+ * Download the plugin archive
+ * Open `File --> Settings... --> Plugins`
+ * Click **cogwheel button** and select `Install plugin from disk`
 
 ## Usage
 <ol>
