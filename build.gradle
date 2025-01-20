@@ -4,7 +4,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 plugins {
     id "java"
     id "org.jetbrains.kotlin.jvm" version "2.0.20"
-    id "org.jetbrains.intellij.platform" version "2.0.1"
+    id "org.jetbrains.intellij.platform" version "2.2.1"
     id "pl.allegro.tech.build.axion-release" version "1.18.9"
     id "org.jetbrains.changelog" version "2.0.0"
 }
@@ -13,7 +13,7 @@ group = "com.github.imvs"
 
 ext {
     pluignSinceBuild = "232"
-    pluignUntilBuild = "242.*"
+    pluignUntilBuild = "251.*"
 }
 
 scmVersion {
@@ -93,7 +93,7 @@ tasks {
 dependencies {
 
     intellijPlatform {
-        intellijIdeaCommunity("2023.2.6")
+        intellijIdeaCommunity("251.14649.49")
         bundledPlugin("com.intellij.java")
         instrumentationTools()
         pluginVerifier()
@@ -101,7 +101,7 @@ dependencies {
     }
 
     //noinspection VulnerableLibrariesLocal
-    implementation("org.springframework.cloud:spring-cloud-config-server:4.1.0") {
+    implementation("org.springframework.cloud:spring-cloud-config-server:4.1.5") {
         exclude group: "org.springframework.boot", module: "spring-boot-starter-web"
         exclude group: "org.springframework.boot", module: "spring-boot-starter-validation"
         exclude group: "org.springframework.security", module: "spring-security-crypto"
