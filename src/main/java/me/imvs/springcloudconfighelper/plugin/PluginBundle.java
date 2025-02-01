@@ -20,7 +20,7 @@ public final class PluginBundle {
     public static String property(
             @NotNull @PropertyKey(resourceBundle = BUNDLE) String key
     ) {
-        return INSTANCE.getResourceBundle().getString(key);
+        return INSTANCE.getMessage(key);
     }
 
     @Nls
